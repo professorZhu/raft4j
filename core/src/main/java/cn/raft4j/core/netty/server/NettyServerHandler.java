@@ -32,12 +32,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-
         String txt = msg.toString(CharsetUtil.UTF_8);
-
         LOGGER.info("收到客户端的消息：{}", txt);
-
-
         executorService.execute(()->{
             ackMessage(ctx, txt);
         });
@@ -52,14 +48,9 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<ByteBuf> {
      * @Description 响应
      **/
     public void ackMessage(ChannelHandlerContext ctx, String message) {
-
-
         //自定义分隔符
         String msg = message+ NettyServer.DELIMITER;
-
-
         ByteBuf byteBuf = Unpooled.copiedBuffer(msg, CharsetUtil.UTF_8);
-
         //回应客户端
         ctx.writeAndFlush(byteBuf);
     }
@@ -76,7 +67,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         nConnection.incrementAndGet();
-
         LOGGER.info("请求连接...{}，当前连接数: ：{}",  ctx.channel().id(),nConnection.get());
     }
 
@@ -105,12 +95,9 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
-
         // 打印错误日志
         cause.printStackTrace();
-
         Channel channel = ctx.channel();
-
         if(channel.isActive()){
             ctx.close();
         }

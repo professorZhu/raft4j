@@ -109,10 +109,7 @@ public class NettyClient {
                     }, 10, TimeUnit.SECONDS);
                 }
             }
-
-
         });
-
         socketChannel = (SocketChannel) channelFuture.channel();
     }
 

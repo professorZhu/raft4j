@@ -25,9 +25,7 @@ public class NettyClientService {
     public void setNettyClient(NettyClient nettyClient){
         this.nettyClient=nettyClient;
     }
-
-
-
+    
     public String sendSyncMsg(String text, String dataId, String serviceId) throws InterruptedException {
 
         // 封装数据
@@ -37,8 +35,6 @@ public class NettyClientService {
         object.put("serviceId",serviceId);
         // 发送同步消息
         nettyClient.sendSyncMsg(object.toJSONString());
-
-
         SyncFuture<String> syncFuture = new SyncFuture<String>();
         // 放入缓存中
         Content.futureCache.put(serviceId, syncFuture);
@@ -49,8 +45,6 @@ public class NettyClientService {
 
 
     public SyncFuture<String> sendAsyncMsg(String text, String dataId, String serviceId) {
-
-
         // 封装数据
         JSONObject object = new JSONObject();
         object.put("dataId", dataId);
@@ -58,7 +52,6 @@ public class NettyClientService {
         object.put("serviceId",serviceId);
         // 发送同步消息
         nettyClient.sendSyncMsg(object.toJSONString());
-
         SyncFuture<String> syncFuture = new SyncFuture<String>();
         // 放入缓存中
         Content.futureCache.put(serviceId, syncFuture);
