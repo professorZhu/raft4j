@@ -30,8 +30,6 @@ public class NettyClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyClient.class);
 
     private EventLoopGroup group = new NioEventLoopGroup();
-
-    private NettyClientService nettyClientService;
     /**
      *@Fields DELIMITER : 自定义分隔符，服务端和客户端要保持一致
      */
@@ -40,12 +38,12 @@ public class NettyClient {
     /**
      * @Fields hostIp : 服务端ip
      */
-    private String hostIp = "127.0.0.1";
+    private String hostIp;
 
     /**
      * @Fields port : 服务端端口
      */
-    private int port= 8888;
+    private int port;
 
     /**
      * @Fields socketChannel : 通道
@@ -54,16 +52,8 @@ public class NettyClient {
 
     public NettyClient(NettyClientService nettyClientService){
         nettyClientService.setNettyClient(this);
-        this.nettyClientService = nettyClientService;
-    }
-    /**
-     * 追加方法
-     */
-    public NettyClient(NettyClientService nettyClientService, Note note){
-        nettyClientService.setNettyClient(this);
-        this.hostIp = note.getIp();
-        this.port = note.getPort();
-        this.nettyClientService = nettyClientService;
+        this.port = nettyClientService.getPort();
+        this.hostIp = nettyClientService.getIp();
     }
     /**
      * @Description: 启动客户端
@@ -85,7 +75,7 @@ public class NettyClient {
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 // 将小的数据包包装成更大的帧进行传送，提高网络的负载,即TCP延迟传输
                 .option(ChannelOption.TCP_NODELAY, true)
-                .handler(new NettyClientHandlerInitilizer());
+                .handler(new NettyClientHandlerInitilizer(this));
 
         // 连接
         ChannelFuture channelFuture = bootstrap.connect();
@@ -95,15 +85,14 @@ public class NettyClient {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if(future.isSuccess()) {
-                  System.out.println("连接Netty服务端成功...");
+                    LOGGER.error("连接Netty服务端成功...");
                 }else {
-
-                    System.out.println("连接Netty服务端失败，进行断线重连...");
+                    LOGGER.error("连接Netty服务端失败，进行断线重连...");
                     final EventLoop loop =future.channel().eventLoop();
                     loop.schedule(new Runnable() {
                         @Override
                         public void run() {
-                            System.out.println("连接正在重试...");
+                            LOGGER.error("连接正在重试...");
                             start();
                         }
                     }, 10, TimeUnit.SECONDS);
@@ -113,40 +102,10 @@ public class NettyClient {
         socketChannel = (SocketChannel) channelFuture.channel();
     }
 
-
-    /**
-     *@Description: 消息发送
-     *@Author:杨攀
-     *@Since: 2019年9月12日下午5:08:47
-     *@param message
-     */
-    public void sendMsg(String  message) {
-
-        String msg = message.concat(NettyClient.DELIMITER);
-
-        ByteBuf byteBuf = Unpooled.copiedBuffer(msg, CharsetUtil.UTF_8);
-        ChannelFuture future = socketChannel.writeAndFlush(byteBuf);
-
-        future.addListener(new ChannelFutureListener() {
-
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-
-                if(future.isSuccess()) {
-                    System.out.println("===========发送成功");
-                }else {
-                    System.out.println("------------------发送失败");
-                }
-            }
-        });
-    }
-
-
-
     /**
      *@Description: 发送同步消息
-     *@Author:杨攀
-     *@Since: 2019年9月12日下午5:08:47
+     *@Author: 朱强
+     *@Since:
      *@param message
      */
     public String sendSyncMsg(String  message) {
@@ -155,16 +114,12 @@ public class NettyClient {
         String msg = message.concat(NettyClient.DELIMITER);
         ByteBuf byteBuf = Unpooled.copiedBuffer(msg, CharsetUtil.UTF_8);
         try {
-
             ChannelFuture future = socketChannel.writeAndFlush(byteBuf);
             future.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
-
-                    if(future.isSuccess()) {
-                        System.out.println("===========发送成功");
-                    }else {
-                        System.out.println("------------------发送失败");
+                    if(!future.isSuccess()) {
+                        LOGGER.error("-----------------发送失败-----------------");
                     }
                 }
             });
@@ -173,24 +128,5 @@ public class NettyClient {
         }
 
         return result;
-    }
-
-    public String getHostIp() {
-        return hostIp;
-    }
-
-
-    public void setHostIp(String hostIp) {
-        this.hostIp = hostIp;
-    }
-
-
-    public int getPort() {
-        return port;
-    }
-
-
-    public void setPort(int port) {
-        this.port = port;
     }
 }

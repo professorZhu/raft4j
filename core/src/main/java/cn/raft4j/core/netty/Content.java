@@ -23,8 +23,8 @@ public class Content {
             .maximumSize(10000)
             //设置并发级别为20，并发级别是指可以同时写缓存的线程数
             .concurrencyLevel(20)
-            // expireAfterWrite设置写缓存后8秒钟过期
-            .expireAfterWrite(8, TimeUnit.SECONDS)
+            // expireAfterWrite设置写缓存后10秒钟过期
+            .expireAfterWrite(10, TimeUnit.SECONDS)
             //设置缓存的移除通知
             .removalListener(new RemovalListener<Object, Object>() {
                 @Override

@@ -1,5 +1,7 @@
 package cn.raft4j.core;
 
+import cn.raft4j.common.util.NanoIdUtils;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -92,13 +94,20 @@ public class RaftManager {
 
 
     public  boolean election(){
+        int vot=1;
         for (Note note : noteMap.values()){
             try{
-                String returen = note.getNettyClientService().sendSyncMsg("你好", UUID.randomUUID().toString(), UUID.randomUUID().toString());
-                System.out.println("-----------"+returen+"-----------");
+                Message message = new Message();
+                message.setUuid(NanoIdUtils.randomNanoId());
+                message.setType(1);
+                String returen = note.getNettyClientService().sendSyncMsg(message);
+                System.out.println("election---------"+returen);
             }catch (Exception e){
                 e.printStackTrace();
             }
+        }
+        if (vot==2){
+            return true;
         }
         return false;
     }

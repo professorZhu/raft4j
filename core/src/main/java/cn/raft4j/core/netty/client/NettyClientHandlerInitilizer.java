@@ -18,6 +18,11 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
  */
 public class NettyClientHandlerInitilizer  extends ChannelInitializer<Channel> {
 
+    private NettyClient nettyClient;
+
+    public NettyClientHandlerInitilizer(NettyClient nettyClient){
+        this.nettyClient = nettyClient;
+    }
     /**
      * @Author zhuqiang
      * @Date 2021/8/31
@@ -39,7 +44,7 @@ public class NettyClientHandlerInitilizer  extends ChannelInitializer<Channel> {
         channelPipeline.addLast("framer", new DelimiterBasedFrameDecoder(1024*1024*2, buf));
         //channelPipeline.addLast("decoder",new StringDecoder(CharsetUtil.UTF_8));
         //channelPipeline.addLast("encoder",new StringEncoder(CharsetUtil.UTF_8));
-        channelPipeline.addLast(new NettyClientHandler());
+        channelPipeline.addLast(new NettyClientHandler(nettyClient));
 
     }
 

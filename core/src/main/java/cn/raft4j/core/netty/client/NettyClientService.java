@@ -1,10 +1,14 @@
 package cn.raft4j.core.netty.client;
 
+import cn.raft4j.core.Message;
 import cn.raft4j.core.netty.Content;
 import cn.raft4j.core.netty.SyncFuture;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @copyright Copyright 2017-2022 JD.COM All Right Reserved
@@ -21,41 +25,55 @@ public class NettyClientService {
 
     private NettyClient nettyClient;
 
+    private String ip;
+
+    private Integer port;
 
     public void setNettyClient(NettyClient nettyClient){
         this.nettyClient=nettyClient;
     }
-    
-    public String sendSyncMsg(String text, String dataId, String serviceId) throws InterruptedException {
 
+    /**
+     * 发送消息
+     */
+    public Message sendSyncMsg(Message message) throws InterruptedException {
         // 封装数据
-        JSONObject object = new JSONObject();
-        object.put("dataId", dataId);
-        object.put("text", text);
-        object.put("serviceId",serviceId);
+        String messageStr = JSON.toJSONString(message);
         // 发送同步消息
-        nettyClient.sendSyncMsg(object.toJSONString());
-        SyncFuture<String> syncFuture = new SyncFuture<String>();
+        nettyClient.sendSyncMsg(messageStr);
+        SyncFuture<Message> syncFuture = new SyncFuture<Message>();
         // 放入缓存中
-        Content.futureCache.put(serviceId, syncFuture);
-
-        return syncFuture.get();
+        Content.futureCache.put(message.getUuid(), syncFuture);
+        return syncFuture.get(500, TimeUnit.MILLISECONDS);
     }
 
-
-
-    public SyncFuture<String> sendAsyncMsg(String text, String dataId, String serviceId) {
+    /**
+     * 异步发送消息
+     */
+    public SyncFuture<Message> sendAsyncMsg(Message message) {
         // 封装数据
-        JSONObject object = new JSONObject();
-        object.put("dataId", dataId);
-        object.put("text", text);
-        object.put("serviceId",serviceId);
+        String messageStr = JSON.toJSONString(message);
         // 发送同步消息
-        nettyClient.sendSyncMsg(object.toJSONString());
-        SyncFuture<String> syncFuture = new SyncFuture<String>();
+        nettyClient.sendSyncMsg(messageStr);
+        SyncFuture<Message> syncFuture = new SyncFuture<Message>();
         // 放入缓存中
-        Content.futureCache.put(serviceId, syncFuture);
+        Content.futureCache.put(message.getUuid(), syncFuture);
         return syncFuture;
     }
 
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
 }

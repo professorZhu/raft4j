@@ -43,22 +43,22 @@ public class ClientMain {
                 System.out.println("错误的请求参数");
                 continue;
             }
-            // 异步调用
-            System.out.println("发送异步请求");
-            SyncFuture<String> future =  nettyClientService.sendAsyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
-            // 异步调用
-            System.out.println("发送异步请求");
-            SyncFuture<String> future1 =  nettyClientService.sendAsyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
-            System.out.println("service result async：" + future.get(2000, TimeUnit.MILLISECONDS));
-            System.out.println("service result async：" + future1.get(2000, TimeUnit.MILLISECONDS));
-
-            //同步调用
-            System.out.println("发送同步请求");
-            String result = nettyClientService.sendSyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
-            System.out.println("发送同步请求");
-            String result1 = nettyClientService.sendSyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
-            System.out.println("service result sync：" + result);
-            System.out.println("service result sync：" + result1);
+//            // 异步调用
+//            System.out.println("发送异步请求");
+//            SyncFuture<String> future =  nettyClientService.sendAsyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
+//            // 异步调用
+//            System.out.println("发送异步请求");
+//            SyncFuture<String> future1 =  nettyClientService.sendAsyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
+//            System.out.println("service result async：" + future.get(2000, TimeUnit.MILLISECONDS));
+//            System.out.println("service result async：" + future1.get(2000, TimeUnit.MILLISECONDS));
+//
+//            //同步调用
+//            System.out.println("发送同步请求");
+//            String result = nettyClientService.sendSyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
+//            System.out.println("发送同步请求");
+//            String result1 = nettyClientService.sendSyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
+//            System.out.println("service result sync：" + result);
+//            System.out.println("service result sync：" + result1);
 
         }
 

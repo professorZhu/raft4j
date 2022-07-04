@@ -17,11 +17,10 @@ public class ClientServerFactory {
 
         public static NettyClientService getNettyClientService(Note note){
             NettyClientService nettyClientService = new NettyClientService();
-
-            NettyClient client = new NettyClient(nettyClientService,note);
-
+            nettyClientService.setIp(note.getIp());
+            nettyClientService.setPort(note.getPort());
+            NettyClient client = new NettyClient(nettyClientService);
             client.start();
-            System.out.println("启动成功");
             return nettyClientService;
         }
 

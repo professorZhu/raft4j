@@ -30,7 +30,7 @@ public class Note8089 {
 
         raftManager.start();
 
-        Thread.sleep(100000L);
+        Thread.sleep(1000000L);
 
     }
 }
