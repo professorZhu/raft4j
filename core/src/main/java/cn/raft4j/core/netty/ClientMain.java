@@ -2,6 +2,8 @@ package cn.raft4j.core.netty;
 
 
 
+import cn.raft4j.common.util.NanoIdUtils;
+import cn.raft4j.core.Message;
 import cn.raft4j.core.netty.client.NettyClient;
 import cn.raft4j.core.netty.client.NettyClientService;
 
@@ -24,7 +26,8 @@ public class ClientMain {
 
     public static void main(String args []) throws Exception {
         NettyClientService nettyClientService = new NettyClientService();
-
+        nettyClientService.setIp("127.0.0.1");
+        nettyClientService.setPort(8888);
         NettyClient client = new NettyClient(nettyClientService);
 
         new Thread(()->{
@@ -38,27 +41,22 @@ public class ClientMain {
                 System.out.println("请求为空");
                 continue;
             }
-            String arr[] = str.split("-");
-            if (arr.length<2){
-                System.out.println("错误的请求参数");
-                continue;
-            }
-//            // 异步调用
-//            System.out.println("发送异步请求");
-//            SyncFuture<String> future =  nettyClientService.sendAsyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
-//            // 异步调用
-//            System.out.println("发送异步请求");
-//            SyncFuture<String> future1 =  nettyClientService.sendAsyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
-//            System.out.println("service result async：" + future.get(2000, TimeUnit.MILLISECONDS));
-//            System.out.println("service result async：" + future1.get(2000, TimeUnit.MILLISECONDS));
-//
-//            //同步调用
-//            System.out.println("发送同步请求");
-//            String result = nettyClientService.sendSyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
-//            System.out.println("发送同步请求");
-//            String result1 = nettyClientService.sendSyncMsg(arr[0],arr[1],UUID.randomUUID().toString());
-//            System.out.println("service result sync：" + result);
-//            System.out.println("service result sync：" + result1);
+
+            Message message = new Message();
+
+            message.setType(1);
+            message.setUuid(NanoIdUtils.randomNanoId());
+            message.setContent("异步调用: "+str);
+            // 异步调用
+            SyncFuture<Message> future =  nettyClientService.sendAsyncMsg(message);
+            System.out.println(future.get().toString());
+
+            message.setType(1);
+            message.setUuid(NanoIdUtils.randomNanoId());
+            message.setContent("同步调用:"+str);
+            //同步调用
+            Message result = nettyClientService.sendSyncMsg(message);
+            System.out.println(result.toString());
 
         }
 

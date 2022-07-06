@@ -1,9 +1,12 @@
 package cn.raft4j.core;
 
 import cn.raft4j.common.util.NanoIdUtils;
+import com.alibaba.fastjson.JSON;
+import com.sun.tools.corba.se.idl.constExpr.Not;
 
 import java.util.Map;
-import java.util.UUID;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,127 +22,104 @@ import java.util.concurrent.TimeUnit;
  */
 public class RaftManager {
 
-    private Integer identity=1; // 1 , 2 , 3 follower candidate leader
+    private NoteContext noteContext = NoteContext.INSTANCE;
 
-    private Integer vot; //投票数
 
     private long eletime = 500; //选举超时时间
 
-    private Map<String,Note> noteMap;
-
-    private Long lastLeader;
-
-    private Note note;
 
     private ScheduledExecutorService service = Executors.newScheduledThreadPool(5);
 
+
     public void start() {
-
-        //启动server
-        ServerFactory.service(note);
-
-        //初始化通道
-        for (Note note : noteMap.values()){
-            note.setNettyClientService(ClientServerFactory.getNettyClientService(note));
-        }
-
-
-
+        Note note = noteContext.getLocalNote();
         //5毫秒执行一次
         service.scheduleAtFixedRate(()->{
-            if (identity!=3 ){
-                if (candidateRun()) {
-                    identity = 3;
-                    lastLeader = System.currentTimeMillis();
-                }
+            if (!note.isLeader() && candidateRun(note)){
+                note.leader(); //晋升为leader
+                note.resetLastTime();
             }
         },0,1000, TimeUnit.MILLISECONDS);
 
-
-//        //如果是leader 开始同步消息
-//        service.scheduleAtFixedRate(()->{
-//            if (identity==3 ){
-//                append();
-//            }
-//        },0,5, TimeUnit.MILLISECONDS);
+        //如果是leader 开始同步消息
+        service.scheduleAtFixedRate(()->{
+            if (note.isLeader() && append() ){
+                note.resetLastTime();//现在没什么用，在数据同步时，需要追加操作
+            }
+        },0,5, TimeUnit.MILLISECONDS);
 
     }
 
-
-    public void setNoteMap(Map<String, Note> noteMap) {
-        this.noteMap = noteMap;
-    }
-
-    public boolean candidateRun(){
+    public boolean candidateRun(Note note){
         boolean election = false;
-        try{
-
-            long time = System.currentTimeMillis();
-
-            if (lastLeader==null){
-                lastLeader = time;
-            }
-            if (time - lastLeader > eletime ){
-                if (election()){
-                    identity = 3;
-                }
-                lastLeader = System.currentTimeMillis();
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
+        long time = System.currentTimeMillis();
+        if (Objects.equals(note.lastTime(),0)){
+            note.resetLastTime();
         }
+        if (time - note.lastTime() > eletime && election()){
+            note.success(); //选举成功的一些初始化操作
+            return true; //选举成功
+        }
+        note.resetLastTime();
         return election;
     }
 
 
     public  boolean election(){
-        int vot=1;
-        for (Note note : noteMap.values()){
-            try{
-                Message message = new Message();
-                message.setUuid(NanoIdUtils.randomNanoId());
-                message.setType(1);
-                String returen = note.getNettyClientService().sendSyncMsg(message);
-                System.out.println("election---------"+returen);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+        Note loaclNote = noteContext.getLocalNote();
+        for (Note note : noteContext.getAllNote()){
+            if (electionMessage(note)) loaclNote.incrementVot();
         }
-        if (vot==2){
+        return canLeader();
+    }
+
+    /**
+     * 是否可以晋升
+     */
+    private boolean canLeader(){
+        Note loaclNote = noteContext.getLocalNote();
+        int vot = loaclNote.getVot();
+        Set<Note> set =  noteContext.getAllNote();
+        int size = set.size();
+        if (vot > (size/2)){
             return true;
         }
         return false;
     }
 
+    public boolean electionMessage(Note note){
+        try {
+        Message message = new Message();
+        message.setUuid(NanoIdUtils.randomNanoId());
+        message.setType(1);
+        System.out.println("发送消息："+JSON.toJSONString(message));
+        Message   re = note.getNettyClientService().sendSyncMsg(message);
+        System.out.println("收到消息---------"+JSON.toJSONString(re));
+        if (Objects.equals(re.getContent(),"ok")){ //这里的判断需要优化
+            return true;
+        }
 
-    int n =1;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     //测试方法leader 心跳消息
     public  boolean append(){
-
-        n++;
-        for (Note note : noteMap.values()){
-            System.out.println(note.getIp()+"开始进行通信；"+n);
-            lastLeader = System.currentTimeMillis();
-        }
-        if (n==1000){ //通信
-            identity=1;//变成follower
-            n=1;
-            return false;
+        for (Note note : noteContext.getAllNote()){
+            try{
+                Message message = new Message();
+                message.setType(2);
+                message.setUuid(NanoIdUtils.randomNanoId());
+                Message reMessage = note.getNettyClientService().sendSyncMsg(message);
+                System.out.println(reMessage.toString());
+                note.resetLastTime();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         return true;
     }
 
-
-    public  void recevie(){
-        System.out.println("收到了消息");
-        if (identity==1 && vot==0){
-            System.out.println("投票");
-        }
-        System.out.println("不投票");
-    }
-
-    public void setNote(Note note) {
-        this.note = note;
-    }
 }

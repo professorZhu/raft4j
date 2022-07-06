@@ -16,9 +16,9 @@ import cn.raft4j.core.netty.server.NettyServer;
 public class ServerFactory {
 
 
-    public static void service(Note note){
+    public static void service(RaftManager raftManager){
         try {
-            NettyServer server = new NettyServer(note.getPort());
+            NettyServer server = new NettyServer(8080);
             server.start();
         } catch (InterruptedException e) {
             e.printStackTrace();

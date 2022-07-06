@@ -44,4 +44,13 @@ public class Message {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "uuid='" + uuid + '\'' +
+                ", type=" + type +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }
