@@ -1,5 +1,6 @@
 package cn.raft4j.core.netty.server;
 
+import cn.raft4j.core.NoteContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -29,6 +30,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<ByteBuf> {
     public static AtomicInteger nConnection = new AtomicInteger(0);
 
     private ExecutorService executorService = Executors.newFixedThreadPool(128);
+
+    private NoteContext noteContext = NoteContext.INSTANCE;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
