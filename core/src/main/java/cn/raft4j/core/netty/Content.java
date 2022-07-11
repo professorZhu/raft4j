@@ -29,7 +29,7 @@ public class Content {
             .removalListener(new RemovalListener<Object, Object>() {
                 @Override
                 public void onRemoval(RemovalNotification<Object, Object> notification) {
-                    System.out.println("LoadingCache: "+notification.getKey()+" was removed, cause is "+ notification.getCause());
+//                    System.out.println("LoadingCache: "+notification.getKey()+" was removed, cause is "+ notification.getCause());
                 }
             })
             //build方法中可以指定CacheLoader，在缓存不存在时通过CacheLoader的实现自动加载缓存

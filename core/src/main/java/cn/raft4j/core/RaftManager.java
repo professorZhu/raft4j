@@ -39,7 +39,7 @@ public class RaftManager {
             }else{
                 note.resetLastTime();
             }
-        },10,1000, TimeUnit.MILLISECONDS);
+        },10,200, TimeUnit.MILLISECONDS);
 
 
 
@@ -116,6 +116,7 @@ public class RaftManager {
                 message.setType(2);
                 message.setUuid(NanoIdUtils.randomNanoId());
                 Message reMessage = note.getNettyClientService().sendSyncMsg(message);
+                System.out.println(reMessage.toString()+"==========");
             }catch (Exception e){
                 e.printStackTrace();
             }
