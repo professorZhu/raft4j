@@ -3,14 +3,12 @@ package cn.raft4j.core.netty;
 
 
 import cn.raft4j.common.util.NanoIdUtils;
-import cn.raft4j.core.Message;
+import cn.raft4j.core.message.Message;
 import cn.raft4j.core.netty.client.NettyClient;
 import cn.raft4j.core.netty.client.NettyClientService;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @copyright Copyright 2017-2022 JD.COM All Right Reserved

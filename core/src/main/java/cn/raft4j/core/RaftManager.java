@@ -1,10 +1,9 @@
 package cn.raft4j.core;
 
 import cn.raft4j.common.util.NanoIdUtils;
+import cn.raft4j.core.message.Message;
 import com.alibaba.fastjson.JSON;
-import com.sun.tools.corba.se.idl.constExpr.Not;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -35,33 +34,44 @@ public class RaftManager {
         Note note = noteContext.getLocalNote();
         //5毫秒执行一次
         service.scheduleAtFixedRate(()->{
-            if (!note.isLeader() && candidateRun(note)){
+            if (!note.isLeader() && reCandidate(note) && candidateRun(note) ){
                 note.leader(); //晋升为leader
+            }else{
                 note.resetLastTime();
             }
-        },0,1000, TimeUnit.MILLISECONDS);
+        },10,1000, TimeUnit.MILLISECONDS);
+
+
 
         //如果是leader 开始同步消息
         service.scheduleAtFixedRate(()->{
             if (note.isLeader() && append() ){
                 note.resetLastTime();//现在没什么用，在数据同步时，需要追加操作
             }
-        },0,5, TimeUnit.MILLISECONDS);
-
+        },0,100, TimeUnit.MILLISECONDS);
     }
 
-    public boolean candidateRun(Note note){
-        boolean election = false;
+    public boolean reCandidate(Note note){
         long time = System.currentTimeMillis();
         if (Objects.equals(note.lastTime(),0)){
             note.resetLastTime();
         }
-        if (time - note.lastTime() > eletime && election()){
-            note.success(); //选举成功的一些初始化操作
+        if (time - note.lastTime() > eletime){
+            System.out.println("---------------开始晋选-----------");
+            note.candidate(); //成为竞选人
+            return true;
+        }
+        return false;
+    }
+    public boolean candidateRun(Note note){
+        note.incrementVot();
+        if (election()){
+            System.out.println("竞选成功");
+            note.clearVot();
             return true; //选举成功
         }
-        note.resetLastTime();
-        return election;
+        note.clearVot();
+        return false;
     }
 
 
@@ -70,18 +80,12 @@ public class RaftManager {
         for (Note note : noteContext.getAllNote()){
             if (electionMessage(note)) loaclNote.incrementVot();
         }
-        return canLeader();
-    }
 
-    /**
-     * 是否可以晋升
-     */
-    private boolean canLeader(){
-        Note loaclNote = noteContext.getLocalNote();
         int vot = loaclNote.getVot();
+        System.out.println("本次竞选获取选票："+vot);
         Set<Note> set =  noteContext.getAllNote();
         int size = set.size();
-        if (vot > (size/2)){
+        if (vot >= (size+1/2)){
             return true;
         }
         return false;
@@ -89,16 +93,15 @@ public class RaftManager {
 
     public boolean electionMessage(Note note){
         try {
-        Message message = new Message();
-        message.setUuid(NanoIdUtils.randomNanoId());
-        message.setType(1);
-        System.out.println("发送消息："+JSON.toJSONString(message));
-        Message   re = note.getNettyClientService().sendSyncMsg(message);
-        System.out.println("收到消息---------"+JSON.toJSONString(re));
-        if (Objects.equals(re.getContent(),"ok")){ //这里的判断需要优化
-            return true;
-        }
-
+            Message message = new Message();
+            message.setUuid(NanoIdUtils.randomNanoId());
+            message.setType(1);
+            System.out.println("发送竞选消息");
+            Message   re = note.getNettyClientService().sendSyncMsg(message);
+            if (re!=null && Objects.equals(re.getContent(),"ok")){ //这里的判断需要优化
+                System.out.println("获得选票");
+                return true;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -113,8 +116,6 @@ public class RaftManager {
                 message.setType(2);
                 message.setUuid(NanoIdUtils.randomNanoId());
                 Message reMessage = note.getNettyClientService().sendSyncMsg(message);
-                System.out.println(reMessage.toString());
-                note.resetLastTime();
             }catch (Exception e){
                 e.printStackTrace();
             }

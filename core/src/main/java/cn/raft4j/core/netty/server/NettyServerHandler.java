@@ -1,7 +1,11 @@
 package cn.raft4j.core.netty.server;
 
-import cn.raft4j.core.Note;
+import cn.raft4j.core.MessageHandlerContext;
 import cn.raft4j.core.NoteContext;
+import cn.raft4j.core.message.AbstractMessageHandle;
+import cn.raft4j.core.message.Message;
+import cn.raft4j.core.message.MessageHandleService;
+import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -32,7 +36,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     private ExecutorService executorService = Executors.newFixedThreadPool(128);
 
-    private NoteContext noteContext = NoteContext.INSTANCE;
+    private MessageHandlerContext handlerContext = MessageHandlerContext.INSTANCE;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
@@ -50,21 +54,21 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<ByteBuf> {
      * @Param
      * @return
      * @Description 响应
-     *              所有响应信息都在这里实现。
-     *              follower 接受选举消息，根据自身状态判断是否需要投票
-     *                       接受leader的心跳及同步数据消息，更改自身数据
-     *              leader   接收follower的回调消息
+     *
      **/
     public void ackMessage(ChannelHandlerContext ctx, String message) {
+        //这块应该重新设计
+        Message msg = JSON.parseObject(message,Message.class);
+        AbstractMessageHandle messageHandleService = handlerContext.getHandle(msg.getType());
+        msg = messageHandleService.dealIn(msg);
+        String msgJSON = JSON.toJSONString(msg);
 
         //自定义分隔符
-        String msg = message+ NettyServer.DELIMITER;
-        ByteBuf byteBuf = Unpooled.copiedBuffer(msg, CharsetUtil.UTF_8);
+        String msgStr = msgJSON+NettyServer.DELIMITER;
+        ByteBuf byteBuf = Unpooled.copiedBuffer(msgStr, CharsetUtil.UTF_8);
         //回应客户端
         ctx.writeAndFlush(byteBuf);
     }
-
-
 
     /**
      *@Description: 每次来一个新连接就对连接数加一

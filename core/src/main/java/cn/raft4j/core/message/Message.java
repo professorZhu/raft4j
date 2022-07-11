@@ -1,4 +1,4 @@
-package cn.raft4j.core;
+package cn.raft4j.core.message;
 
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;

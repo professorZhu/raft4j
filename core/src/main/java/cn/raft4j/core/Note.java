@@ -54,6 +54,15 @@ public class Note {
     // note的联系方式
     private NettyClientService nettyClientService;
 
+    public Note(){
+
+    }
+    public Note(String ip,Integer port,String serverId){
+        this.ip = ip;
+        this.port = port;
+        this.serverId = serverId;
+    }
+
     /**
      *  增加一票
      */
@@ -72,7 +81,7 @@ public class Note {
      * 清空选票
      */
     public void clearVot(){
-        vot.set(0);
+        vot.getAndSet(0);
     }
 
     public Boolean isFollower(){
@@ -85,10 +94,26 @@ public class Note {
         return identity.get() == 3;
     }
     /**
-     * 晋升为leader
+     * 晋升为leader 后做的事
      */
     public void leader(){
         identity.getAndSet(3);
+        clearVot();//清除票数
+        leader();
+    }
+    /**
+     * 成为follower后做的事
+     */
+    public void follower(){
+        identity.getAndSet(1);
+    }
+
+    /**
+     * 成为竞选者做的事
+     */
+    public void candidate(){
+        identity.getAndSet(2);
+
     }
     /**
      * 更新最近一次同步数据的时间
@@ -113,9 +138,8 @@ public class Note {
         return nettyClientService;
     }
 
-
-    public void success(){
-
+    public void setNettyClientService(NettyClientService nettyClientService) {
+        this.nettyClientService = nettyClientService;
     }
 
     @Override

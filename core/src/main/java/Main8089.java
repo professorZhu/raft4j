@@ -1,31 +1,28 @@
-package cn.raft4j.core.netty;
-
-
-import cn.raft4j.core.MessageHandlerContext;
+import cn.raft4j.common.util.NanoIdUtils;
+import cn.raft4j.core.*;
 import cn.raft4j.core.message.ElectionMessageHandle;
 import cn.raft4j.core.message.LeaderMessageHandle;
-import cn.raft4j.core.netty.server.NettyServer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @copyright Copyright 2017-2022 JD.COM All Right Reserved
  * @author: zhuqiang3
  * @version:
- * @Date: 2021-08-30 17:46
+ * @Date: 2022-07-06 16:23
  * @Modified By:
  * @Description: TODO
  * @see
  */
-public class ServerMain {
+public class Main8089 {
 
 
-    public static void main(String args []) throws Exception {
+    public static void main(String [] args){
         MessageHandlerContext handlerContext = MessageHandlerContext.INSTANCE;
         handlerContext.addHandler(new ElectionMessageHandle());
         handlerContext.addHandler(new LeaderMessageHandle());
-        NettyServer server = new NettyServer();
-
-        server.start();
-
-
+        Main.main8089();
     }
+
 }
