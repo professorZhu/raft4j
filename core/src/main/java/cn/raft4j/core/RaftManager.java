@@ -21,6 +21,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class RaftManager {
 
+    public RaftManager(){}
+
+    public RaftManager(long eletime){
+        this.eletime = eletime;
+    }
     private NoteContext noteContext = NoteContext.INSTANCE;
 
 
@@ -56,6 +61,7 @@ public class RaftManager {
         if (Objects.equals(note.lastTime(),0)){
             note.resetLastTime();
         }
+        System.out.println(time - note.lastTime() );
         if (time - note.lastTime() > eletime){
             System.out.println("---------------开始晋选-----------");
             note.candidate(); //成为竞选人
@@ -109,11 +115,13 @@ public class RaftManager {
 
     //测试方法leader 心跳消息
     public  boolean append(){
+        Note localNote = noteContext.getLocalNote();
         for (Note note : noteContext.getAllNote()){
             try{
                 Message message = new Message();
                 message.setType(2);
                 message.setUuid(NanoIdUtils.randomNanoId());
+                message.setContent("来自"+localNote.getIp()+":"+localNote.getPort()+"leader的消息");
                 Message reMessage = note.getNettyClientService().sendSyncMsg(message);
                 if (reMessage==null){
                     System.out.println("没有收到"+note.getIp()+":"+note.getPort()+"反馈的消息");

@@ -21,6 +21,7 @@ public class LeaderMessageHandle extends AbstractMessageHandle{
 
     @Override
     public Message deal(Message message) {
+        System.out.println("收到消息:"+message.toString());
         Note note = noteContext.getLocalNote();
         note.resetLastTime();
         note.clearVot();

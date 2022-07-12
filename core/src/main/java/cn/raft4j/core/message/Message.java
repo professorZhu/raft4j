@@ -9,7 +9,7 @@ import jdk.nashorn.internal.objects.annotations.Setter;
  * @version:
  * @Date: 2022-06-30 15:12
  * @Modified By:
- * @Description: 通信主类
+ * @Description: 通信主类，应该追加note节点信息
  * @see
  */
 public class Message {
