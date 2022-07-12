@@ -117,6 +117,8 @@ public class RaftManager {
                 Message reMessage = note.getNettyClientService().sendSyncMsg(message);
                 if (reMessage==null){
                     System.out.println("没有收到"+note.getIp()+":"+note.getPort()+"反馈的消息");
+                }else{
+                    System.out.println("收到"+note.getIp()+":"+note.getPort()+"反馈的消息");
                 }
             }catch (Exception e){
                 e.printStackTrace();
