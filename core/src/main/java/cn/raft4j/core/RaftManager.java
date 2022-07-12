@@ -24,7 +24,7 @@ public class RaftManager {
     private NoteContext noteContext = NoteContext.INSTANCE;
 
 
-    private long eletime = 500; //选举超时时间
+    private long eletime = 1000; //选举超时时间
 
 
     private ScheduledExecutorService service = Executors.newScheduledThreadPool(5);
@@ -37,9 +37,9 @@ public class RaftManager {
             if (!note.isLeader() && reCandidate(note) && candidateRun(note) ){
                 note.leader(); //晋升为leader
             }else{
-                note.resetLastTime();
+                note.resetLastTime(); //重置候选时间
             }
-        },10,200, TimeUnit.MILLISECONDS);
+        },10,2000, TimeUnit.MILLISECONDS);
 
 
 
@@ -48,7 +48,7 @@ public class RaftManager {
             if (note.isLeader() && append() ){
                 note.resetLastTime();//现在没什么用，在数据同步时，需要追加操作
             }
-        },0,100, TimeUnit.MILLISECONDS);
+        },0,1000, TimeUnit.MILLISECONDS);
     }
 
     public boolean reCandidate(Note note){
@@ -64,14 +64,14 @@ public class RaftManager {
         return false;
     }
     public boolean candidateRun(Note note){
+        boolean success=false;
         note.incrementVot();
         if (election()){
             System.out.println("竞选成功");
-            note.clearVot();
-            return true; //选举成功
+            success=true;
         }
         note.clearVot();
-        return false;
+        return success;
     }
 
 
@@ -96,7 +96,6 @@ public class RaftManager {
             Message message = new Message();
             message.setUuid(NanoIdUtils.randomNanoId());
             message.setType(1);
-            System.out.println("发送竞选消息");
             Message   re = note.getNettyClientService().sendSyncMsg(message);
             if (re!=null && Objects.equals(re.getContent(),"ok")){ //这里的判断需要优化
                 System.out.println("获得选票");
@@ -116,7 +115,9 @@ public class RaftManager {
                 message.setType(2);
                 message.setUuid(NanoIdUtils.randomNanoId());
                 Message reMessage = note.getNettyClientService().sendSyncMsg(message);
-                System.out.println(reMessage.toString()+"==========");
+                if (reMessage==null){
+                    System.out.println("没有收到"+note.getIp()+":"+note.getPort()+"反馈的消息");
+                }
             }catch (Exception e){
                 e.printStackTrace();
             }

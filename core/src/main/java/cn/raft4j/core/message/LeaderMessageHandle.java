@@ -25,7 +25,7 @@ public class LeaderMessageHandle extends AbstractMessageHandle{
         note.resetLastTime();
         note.clearVot();
         note.follower();
-        message.setContent("反馈leader message");
+        message.setContent(note.getIp()+":"+note.getPort()+"反馈leader消息");
         return message;
     }
 }
