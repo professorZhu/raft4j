@@ -1,4 +1,4 @@
-package cn.raft4j.core.netty.server;
+package cn.raft4j.core.rpc.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

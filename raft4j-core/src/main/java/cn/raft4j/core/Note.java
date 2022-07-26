@@ -1,7 +1,6 @@
 package cn.raft4j.core;
 
-import cn.raft4j.core.netty.client.NettyClientService;
-import io.netty.channel.socket.SocketChannel;
+import cn.raft4j.core.rpc.client.NettyClientService;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -1,4 +1,4 @@
-package cn.raft4j.core.netty.client;
+package cn.raft4j.core.rpc.client;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

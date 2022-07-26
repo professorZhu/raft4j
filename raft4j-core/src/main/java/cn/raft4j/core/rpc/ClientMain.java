@@ -1,10 +1,10 @@
-package cn.raft4j.core.netty;
+package cn.raft4j.core.rpc;
 
 
 import cn.raft4j.core.common.NanoIdUtils;
 import cn.raft4j.core.message.Message;
-import cn.raft4j.core.netty.client.NettyClient;
-import cn.raft4j.core.netty.client.NettyClientService;
+import cn.raft4j.core.rpc.client.NettyClient;
+import cn.raft4j.core.rpc.client.NettyClientService;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

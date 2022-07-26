@@ -1,4 +1,4 @@
-package cn.raft4j.core.netty;
+package cn.raft4j.core.rpc;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;

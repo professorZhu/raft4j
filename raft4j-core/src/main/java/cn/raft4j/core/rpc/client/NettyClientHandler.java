@@ -1,8 +1,8 @@
-package cn.raft4j.core.netty.client;
+package cn.raft4j.core.rpc.client;
 
 import cn.raft4j.core.message.Message;
-import cn.raft4j.core.netty.Content;
-import cn.raft4j.core.netty.SyncFuture;
+import cn.raft4j.core.rpc.Content;
+import cn.raft4j.core.rpc.SyncFuture;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;

@@ -1,8 +1,8 @@
 package cn.raft4j.core;
 
-import cn.raft4j.core.netty.client.NettyClient;
-import cn.raft4j.core.netty.client.NettyClientService;
-import cn.raft4j.core.netty.server.NettyServer;
+import cn.raft4j.core.rpc.client.NettyClient;
+import cn.raft4j.core.rpc.client.NettyClientService;
+import cn.raft4j.core.rpc.server.NettyServer;
 
 import java.util.Set;
 

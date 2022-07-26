@@ -1,7 +1,6 @@
-package cn.raft4j.core.netty.client;
+package cn.raft4j.core.rpc.client;
 
 
-import cn.raft4j.core.Note;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

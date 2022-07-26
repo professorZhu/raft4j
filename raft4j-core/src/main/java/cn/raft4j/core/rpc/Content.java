@@ -1,4 +1,4 @@
-package cn.raft4j.core.netty;
+package cn.raft4j.core.rpc;
 
 import com.google.common.cache.*;
 
