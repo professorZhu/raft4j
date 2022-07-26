@@ -13,7 +13,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.raft4j</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>raft4j-core</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>

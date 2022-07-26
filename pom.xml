@@ -10,7 +10,8 @@
 
 
     <modules>
-        <module>core</module>
+        <module>raft4j-core</module>
+        <module>raft4j-example</module>
     </modules>
 
     <properties>

@@ -1,4 +1,6 @@
-import cn.raft4j.core.Main;
+package cn.raft4j.example;
+
+
 import cn.raft4j.core.MessageHandlerContext;
 import cn.raft4j.core.message.ElectionMessageHandle;
 import cn.raft4j.core.message.LeaderMessageHandle;
@@ -12,13 +14,13 @@ import cn.raft4j.core.message.LeaderMessageHandle;
  * @Description: TODO
  * @see
  */
-public class Main8090 {
+public class Main8088 {
 
 
     public static void main(String [] args){
         MessageHandlerContext handlerContext = MessageHandlerContext.INSTANCE;
         handlerContext.addHandler(new ElectionMessageHandle());
         handlerContext.addHandler(new LeaderMessageHandle());
-        Main.main8090();
+        Main.main8088();
     }
 }

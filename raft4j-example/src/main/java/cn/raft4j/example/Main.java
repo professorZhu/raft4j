@@ -1,6 +1,9 @@
-package cn.raft4j.core;
+package cn.raft4j.example;
 
-
+import cn.raft4j.core.Note;
+import cn.raft4j.core.NoteContext;
+import cn.raft4j.core.NoteFactory;
+import cn.raft4j.core.RaftManager;
 import cn.raft4j.core.common.NanoIdUtils;
 
 /**
