@@ -1,10 +1,7 @@
-import cn.raft4j.common.util.NanoIdUtils;
+
 import cn.raft4j.core.*;
 import cn.raft4j.core.message.ElectionMessageHandle;
 import cn.raft4j.core.message.LeaderMessageHandle;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @copyright Copyright 2017-2022 JD.COM All Right Reserved

@@ -1,7 +1,7 @@
 package cn.raft4j.core;
 
-import cn.raft4j.common.util.NanoIdUtils;
-import io.netty.util.internal.MathUtil;
+
+import cn.raft4j.core.common.NanoIdUtils;
 
 /**
  * @copyright Copyright 2017-2022 JD.COM All Right Reserved

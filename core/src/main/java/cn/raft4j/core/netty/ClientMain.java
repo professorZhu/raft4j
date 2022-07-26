@@ -1,8 +1,7 @@
 package cn.raft4j.core.netty;
 
 
-
-import cn.raft4j.common.util.NanoIdUtils;
+import cn.raft4j.core.common.NanoIdUtils;
 import cn.raft4j.core.message.Message;
 import cn.raft4j.core.netty.client.NettyClient;
 import cn.raft4j.core.netty.client.NettyClientService;

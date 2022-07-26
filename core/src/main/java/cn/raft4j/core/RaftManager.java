@@ -1,9 +1,8 @@
 package cn.raft4j.core;
 
-import cn.raft4j.common.util.NanoIdUtils;
-import cn.raft4j.core.message.Message;
-import com.alibaba.fastjson.JSON;
 
+import cn.raft4j.core.common.NanoIdUtils;
+import cn.raft4j.core.message.Message;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;

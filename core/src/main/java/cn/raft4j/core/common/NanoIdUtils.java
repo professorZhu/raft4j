@@ -1,4 +1,4 @@
-package cn.raft4j.common.util;
+package cn.raft4j.core.common;
 
 /**
  * @copyright Copyright 2017-2022 JD.COM All Right Reserved
