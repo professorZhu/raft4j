@@ -30,12 +30,12 @@ public class Main {
 
     public static void main8090(){
         NoteContext noteContext = NoteContext.INSTANCE;
-        Note note = new Note("127.0.0.1",8088, NanoIdUtils.randomNanoId());
+        Note note = new Note("127.0.0.1",8088, 8088);
         noteContext.addNode(note);
-        Note note1 = new Note("127.0.0.1",8089, NanoIdUtils.randomNanoId());
+        Note note1 = new Note("127.0.0.1",8089, 8089);
         noteContext.addNode(note1);
 
-        Note localNote = new Note("127.0.0.1",8090, NanoIdUtils.randomNanoId());
+        Note localNote = new Note("127.0.0.1",8090, 8090);
         noteContext.setLocalNote(localNote);
 
         //初始化所有节点
@@ -47,12 +47,12 @@ public class Main {
     }
     public static void main8089(){
         NoteContext noteContext = NoteContext.INSTANCE;
-        Note note = new Note("127.0.0.1",8088, NanoIdUtils.randomNanoId());
+        Note note = new Note("127.0.0.1",8088, 8088);
         noteContext.addNode(note);
-        Note note1 = new Note("127.0.0.1",8090, NanoIdUtils.randomNanoId());
+        Note note1 = new Note("127.0.0.1",8090, 8090);
         noteContext.addNode(note1);
 
-        Note localNote = new Note("127.0.0.1",8089, NanoIdUtils.randomNanoId());
+        Note localNote = new Note("127.0.0.1",8089,8089);
         noteContext.setLocalNote(localNote);
 
         //初始化所有节点
@@ -65,13 +65,13 @@ public class Main {
 
     public static void main8088(){
         NoteContext noteContext = NoteContext.INSTANCE;
-        Note note = new Note("127.0.0.1",8089, NanoIdUtils.randomNanoId());
+        Note note = new Note("127.0.0.1",8089, 8089);
         noteContext.addNode(note);
 
-        Note note1 = new Note("127.0.0.1",8090, NanoIdUtils.randomNanoId());
+        Note note1 = new Note("127.0.0.1",8090, 8090);
         noteContext.addNode(note1);
 
-        Note localNote = new Note("127.0.0.1",8088, NanoIdUtils.randomNanoId());
+        Note localNote = new Note("127.0.0.1",8088, 8088);
         noteContext.setLocalNote(localNote);
 
         //初始化所有节点
